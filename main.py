@@ -1,7 +1,8 @@
 from aiogram import Bot, Dispatcher,executor,types
 from dotenv import load_dotenv
-from aiogram.types import ReplyKeyboardMarkup,InlineKeyboardMarkup,InlineKeyboardButton
+from app import keyboards as kb
 import os,sys,time
+from app import database as db
 
 
 load_dotenv()
@@ -9,24 +10,16 @@ bot = Bot(os.getenv('TOKEN'))
 dp = Dispatcher(bot=bot)
 
 
-main = ReplyKeyboardMarkup(resize_keyboard=True)
-main.add('Каталог').add('Контакты')
-
-
-admin = ReplyKeyboardMarkup(resize_keyboard=True)
-admin.add('Каталог').add('Контакты').add('БО$$')
-
-
-admin_panel = ReplyKeyboardMarkup(resize_keyboard=True)
-admin_panel.add('Добавить товар').add('Удалить товар').add('Рассылка')
+async def on_startup(_):
+    await db.db_start()
 
 
 @dp.message_handler(commands = ['start'])
 async def cmd_start(message: types.Message):
     await message.answer_sticker('CAACAgIAAxkBAAMOZbAIb3rH_mjDy3qqud_Soxkw4FcAAqkYAAIjdeBJmzhaCBy9ZUs0BA')
-    await message.answer(f'{message.from_user.first_name}, добро пожаловать в KOPOSIARY - VAPE КИРОВ', reply_markup=main)
+    await message.answer(f'{message.from_user.first_name}, добро пожаловать в KOPOSIARY - VAPE КИРОВ', reply_markup=kb.main)
     if message.from_user.id == int(os.getenv('ADMIN_ID')) or int(os.getenv('ADMIN_ID2')):
-        await message.answer(f'Вы авторизованы как админ!', reply_markup=admin)
+        await message.answer(f'Вы авторизованы как админ!', reply_markup=kb.admin)
 
 
 @dp.message_handler(commands = ['YaTojePidor'])
@@ -36,21 +29,60 @@ async def cmd_id(message: types.Message):
 
 @dp.message_handler(text = 'Каталог')
 async def catalog(message: types.Message):
-    await message.answer(f'У нас нихуя нет, все вопросы и жалобы ему - @vountmama')
+    await message.answer(f'Что вы хотите приобрести', reply_markup=kb.catalog_panel)
+
+
+@dp.message_handler(text = 'Жидкость')
+async def Liquids(message: types.Message):
+    await message.answer(f'Что вы хотите приобрести', reply_markup=kb.Liquids_list)
+
+
+@dp.message_handler(text = 'Электронные сигареты')
+async def Electronic_cigarettes(message: types.Message):
+    await message.answer(f'Что вы хотите приобрести?', reply_markup=kb.electronic_cigarettes_panel)
+
+
+@dp.message_handler(text = 'Под')
+async def Pod(message: types.Message):
+    await message.answer(f'Какой под вы хотите приобрести?', reply_markup=kb.Pod_list)
+
+
+@dp.message_handler(text = 'Одноразка')
+async def One_size_fits_all(message: types.Message):
+    await message.answer(f'Какую одноразку вы хотите приобрести?', reply_markup=kb.One_size_fits_all_list)
+
+@dp.message_handler(text='Расходники')
+async def Consumables(message: types.Message):
+    await message.answer(f'Что из расходников вы хотите приобрести?', reply_markup=kb.Consumables_list)
 
 
 @dp.message_handler(text = 'Контакты')
 async def contacts(message: types.Message):
-    await message.answer(f'Он пидор, пиши ему - @vountmama')
+    await message.answer(f'Наши представители - @koposyara и @EgorCh17. Также подписывайтесь на нашу оффициальную группу - https://t.me/KOPOSIARY')
 
 
 @dp.message_handler(text = 'БО$$')
 async def boss(message: types.Message):
     if message.from_user.id == int(os.getenv('ADMIN_ID')) or int(os.getenv('ADMIN_ID2')):
         await message.answer_sticker(f'CAACAgIAAxkBAANWZbAkTclvEYsjODKALD8pl4pzhXUAAgMBAAJlogMssyhwGWhp1Z00BA')
-        await message.answer(f'Ты админ, поздравляю!', reply_markup=admin_panel)
+        await message.answer(f'Ты админ, поздравляю!', reply_markup=kb.admin_panel)
     else:
         await message.answer(f'Сори, ты не админ :(')
+
+
+@dp.message_handler(text = 'Добавить товар')
+async def plus(message: types.Message):
+    await message.answer(f'Какой товар хочешь?')
+
+
+@dp.message_handler(text = 'Удалить товар')
+async def minus(message: types.Message):
+    await message.answer(f'Какой товар хочешь удалить?')
+
+
+@dp.message_handler(text = 'Рассылка')
+async def mailing(message: types.Message):
+    await message.answer(f'Гл.пидор - @vountmama')
 
 
 @dp.message_handler(content_types = ['photo','text','document','voice','video','animation','sticker'])
@@ -60,5 +92,5 @@ async def forward_message(message: types.Message):
 
 if __name__ == '__main__':
     start_time = time.time()
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
     print("--- %s seconds ---" % (time.time() - start_time))
