@@ -8,10 +8,10 @@ async def db_start():
     cur.execute("CREATE TABLE IF NOT EXISTS accounts_user("
                 "user_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 "cart_id TEXT, "
-                "sells TEXT)")
+                "sells_count INTEGER)")
     cur.execute("CREATE TABLE IF NOT EXISTS items("
                 "i_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 "name TEXT,"
                 "taste TEXT,"
-                "price TEXT)")
+                "price INTEGER)")
     db.commit()
