@@ -13,5 +13,5 @@ async def db_start():
                 "i_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 "name TEXT,"
                 "taste TEXT,"
-                "price INTEGER)")
+                "price INTEGER )")
     db.commit()
