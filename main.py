@@ -1,8 +1,11 @@
 from aiogram import Bot, Dispatcher,executor,types
 from dotenv import load_dotenv
 from app import keyboards as kb
+from app import bossCommand
+from app import sellersCommand
 import os,sys,time
 from app import database as db
+import asyncio
 
 
 load_dotenv()
@@ -21,6 +24,43 @@ async def cmd_start(message: types.Message):
     await message.answer(f'{message.from_user.first_name}, добро пожаловать в KOPOSIARY - VAPE КИРОВ', reply_markup=kb.main)
     if message.from_user.id == int(os.getenv('ADMIN_ID')) or int(os.getenv('ADMIN_ID2')):
         await message.answer(f'Вы авторизованы как админ!', reply_markup=kb.admin)
+
+#дописать условие что чел должен иметь ранг чтобы ему отвечал бот
+@dp.message_handler(commands=['sellers_help'])
+async def sellsHelp_command(message: types.Message):
+    if message.from_user.id==message.chat.id:
+        await bot.send_message(chat_id=message.from_user.id,
+                               text=sellersCommand.HELP_COMMAND_SELLERS,
+                               parse_mode='HTML')
+    else:
+        new_msg = await message.reply("Пользуйтесь ботом в личных сообщениях!\n"
+                                      "Сообщение удалиться через <b>5 секунд!</b>",
+                                      parse_mode='HTML')
+        await asyncio.sleep(5)
+        try:
+            await new_msg.delete()
+            await message.delete()
+        except Exception as e:
+            pass
+
+
+@dp.message_handler(commands=['boss_help'])
+async def sellsHelp_command(message: types.Message):
+    if message.from_user.id==message.chat.id:
+        await bot.send_message(chat_id=message.from_user.id,
+                               text=bossCommand.HELP_COMMAND_BOSS,
+                               parse_mode='HTML')
+    else:
+        new_msg = await message.reply("Пользуйтесь ботом в личных сообщениях!\n"
+                                      "Сообщение удалиться через <b>5 секунд!</b>",
+                                      parse_mode='HTML')
+        await asyncio.sleep(5)
+        try:
+            await new_msg.delete()
+            await message.delete()
+        except Exception as e:
+            pass
+
 
 
 @dp.message_handler(commands = ['YaTojePidor'])
