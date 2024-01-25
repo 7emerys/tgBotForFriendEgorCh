@@ -123,7 +123,7 @@ async def minus(message: types.Message):
 
 @dp.message_handler(text = 'Рассылка')
 async def mailing(message: types.Message):
-    await message.answer(f'Гл.пидор - @vountmama')
+    await message.answer(f'Гл.пидор - @vountmama ')
 
 
 @dp.message_handler(content_types = ['photo','text','document','voice','video','animation','sticker'])
