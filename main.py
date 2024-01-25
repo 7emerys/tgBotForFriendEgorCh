@@ -16,6 +16,7 @@ async def on_startup(_):
 
 @dp.message_handler(commands = ['start'])
 async def cmd_start(message: types.Message):
+    await db.cmd_db_start(message.from_user.id)
     await message.answer_sticker('CAACAgIAAxkBAAMOZbAIb3rH_mjDy3qqud_Soxkw4FcAAqkYAAIjdeBJmzhaCBy9ZUs0BA')
     await message.answer(f'{message.from_user.first_name}, добро пожаловать в KOPOSIARY - VAPE КИРОВ', reply_markup=kb.main)
     if message.from_user.id == int(os.getenv('ADMIN_ID')) or int(os.getenv('ADMIN_ID2')):
